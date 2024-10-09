@@ -1,9 +1,7 @@
-import auth from '@react-native-firebase/auth'
-import { createUserWithEmailAndPassword } from '@react-native-firebase/auth'
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'
 import { View, TextInput, Button } from 'react-native'
 import { useState } from 'react'
-
-
+import { create } from 'react-test-renderer'
 
 export default function CreateAccount() {
     const [username, setUsername] = useState('')
@@ -11,15 +9,15 @@ export default function CreateAccount() {
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
     const [user, setUser] = useState()
+    const auth = getAuth()
 
-    const handleSignUp = async (email: string, password: string) => {
-        auth()            
-            .createUserWithEmailAndPassword(email, password)
-            .then((userCredential: any) => {
+    const handleSignUp = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then((userCredential) => {
                 const user = userCredential.user
                 console.log(user)
             })
-    } 
+    }
 
     return(
         <View className="flex-1 justify-center items-center">
@@ -31,7 +29,7 @@ export default function CreateAccount() {
             <TextInput 
                 className="border border-black rounded-[25px] w-11/12 py-4 my-4 text-center"
                 onChangeText={setUsername}
-                placeholder="Enter Email    "
+                placeholder="Enter Email"
             />
             <TextInput 
                 className="border border-black rounded-[25px] w-11/12 py-4 my-4 text-center"
@@ -44,7 +42,7 @@ export default function CreateAccount() {
                 placeholder="Confirm Password"
             />
             <Button
-                onPress={() => handleSignUp} //was just {handleSignUp}
+                onPress={handleSignUp} //was just {handleSignUp}
                 title="Create Account"
             >
             </Button>
