@@ -3,7 +3,7 @@ import { Link } from 'expo-router'
 
 export default function LoginButton() {
     return(
-        <View className="border-2 border-black rounded-[20px] px-10 py-3 ">
+        <View className="border border-black rounded-[25px] py-1 px-5 mt-5">
             <Link href="/sign-in">
                 Login
             </Link>
