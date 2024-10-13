@@ -13,7 +13,8 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.michaelwong3049.alarmly"
     },
     "android": {
       "adaptiveIcon": {
@@ -31,6 +32,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "95f3d758-63b4-4968-811d-da53b145aa21"
+      }
+    },
+    "owner": "michaelwong3049"
   }
 }
