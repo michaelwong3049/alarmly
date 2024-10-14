@@ -16,7 +16,7 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.michaelwong3049.alarmly",
       "config": {
-        "googleMapsApiKey": "AIzaSyBDgWcA_VbGH2Db4BvuL09NhltKqs9HtMI"
+        "googleMapsApiKey": ""
       }
     },
     "android": {
