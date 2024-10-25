@@ -24,7 +24,7 @@ export default function Open(){
                 Welcome To Alarmly 👋
             </Text>
 
-            <View className="border border-black rounded-[25px]px-5 py-1 ">
+            <View className="border border-black rounded-[25px] px-5 py-1 ">
                 <Link href="/(tabs)/">
                     Next
                 </Link>
