@@ -11,9 +11,9 @@ export default function HomeLayout() {
         }}
       />
       <Tabs.Screen
-        name="profile"
+        name="alarms"
         options={{
-          title: "Profile"
+          title: "Alarms"
         }}
       />
     </Tabs>
