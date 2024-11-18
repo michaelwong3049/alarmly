@@ -10,14 +10,15 @@ import * as Location from "expo-location";
 import { useState, useEffect } from "react";
 import MapViewDirections from 'react-native-maps-directions'
 import LoginButton from "@/components/buttons/LoginButton";
+import { GooglePlaceDetail, GooglePlacesAutocomplete, Point } from 'react-native-google-places-autocomplete'
 
 export default function HomeScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [destination, setDestination] = useState<string>("");
+  const [destination, setDestination] = useState<GooglePlaceDetail | null>(null);
   const [findDistance, setFindDistance] = useState(false);
   const [travelTime, setTravelTime] = useState<number | null>(null);
-  const [mode, setMode] = useState<"DRIVING" | "WALKING" | "TRANSIT" | "BICYCLING">("DRIVING")
+  const [mode, setMode] = useState<"DRIVING" | "WALKING" | "TRANSIT" | "BICYCLING">("BICYCLING")
 
   const checkForPermission = () => {
     check(PERMISSIONS.IOS.LOCATION_ALWAYS).then((result) => {
@@ -57,8 +58,21 @@ export default function HomeScreen() {
 
   return (
     <View className="flex-1 items-center justify-center">
-      <TextInput className="border border-black rounded-[25px] px-3 py-1" placeholder="Enter Desired Location" onChangeText={(e) => setDestination(e)}/>
-      <Text>Current Destination: {destination}</Text>
+      <View className="w-full flex absolute top-0 z-50" >
+        <GooglePlacesAutocomplete
+          placeholder="Search"
+          onPress={(data, details = null) => {
+            setDestination(details)
+          }}
+          query={{
+            key: process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY,
+            language: "en",
+          }}
+          fetchDetails={true}
+        />
+      </View>
+      
+      <Text className="mt-14">Current Destination: { destination?.formatted_address }</Text>
       <Text>Arrival ETA: {Math.floor(travelTime!)}</Text>
       <Button
         onPress={() => setFindDistance(true)}
@@ -86,7 +100,10 @@ export default function HomeScreen() {
                 latitude: location.coords.latitude,
                 longitude: location.coords.longitude
               }}
-              destination={destination}
+              destination={{
+                latitude: destination!.geometry.location.lat,
+                longitude: destination!.geometry.location.lng
+              }}
               mode={mode}
               onReady={(result) => {
                 setTravelTime(result.duration)
@@ -101,4 +118,3 @@ export default function HomeScreen() {
     </View>
   );
 }
- 
