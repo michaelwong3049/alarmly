@@ -1,63 +1,27 @@
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
-import { Text, View, TextInput, Button, ActivityIndicator } from "react-native";
-import {
-  check,
-  PERMISSIONS,
-  RESULTS,
-  PermissionStatus,
-} from "react-native-permissions";
+import { Text, View, TouchableOpacity } from "react-native";
+import TransitMode from "@/components/buttons/TransitMode";
 import * as Location from "expo-location";
 import { useState, useEffect } from "react";
-import MapViewDirections from 'react-native-maps-directions'
-import LoginButton from "@/components/buttons/LoginButton";
-import { GooglePlaceDetail, GooglePlacesAutocomplete, Point } from 'react-native-google-places-autocomplete'
+import MapViewDirections from "react-native-maps-directions";
+import { GooglePlaceDetail, GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { fetchLocationAlways } from '@/utils/utils'
 
 export default function HomeScreen() {
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [destination, setDestination] = useState<GooglePlaceDetail | null>(null);
   const [findDistance, setFindDistance] = useState(false);
   const [travelTime, setTravelTime] = useState<number | null>(null);
-  const [mode, setMode] = useState<"DRIVING" | "WALKING" | "TRANSIT" | "BICYCLING">("BICYCLING")
-
-  const checkForPermission = () => {
-    check(PERMISSIONS.IOS.LOCATION_ALWAYS).then((result) => {
-      switch (result) {
-        case RESULTS.UNAVAILABLE:
-          console.log(
-            "This feature is not available (on this device / in this context)"
-          );
-          break;
-        case RESULTS.DENIED:
-          console.log(
-            "The permission has not been requested / is denied but requestable"
-          );
-          break;
-        case RESULTS.GRANTED:
-          console.log("The permission is granted");
-          break;
-        case RESULTS.BLOCKED:
-          console.log("The permission is denied and not requestable anymore");
-          break;
-      }
-    });
-  };
+  const [mode, setMode] = useState<"DRIVING" | "WALKING" | "TRANSIT" | "BICYCLING">("DRIVING")
 
   useEffect(() => {
     (async () => {
-      let { status } = await Location.requestBackgroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-
-      let loc = await Location.getCurrentPositionAsync({});
-      setLocation(loc);
+        setLocation(await fetchLocationAlways())
     })();
   }, []);
 
   return (
-    <View className="flex-1 items-center justify-center">
+    <View className="flex items-center justify-center">
       <View className="w-full flex absolute top-0 z-50" >
         <GooglePlacesAutocomplete
           placeholder="Search"
@@ -72,19 +36,30 @@ export default function HomeScreen() {
         />
       </View>
       
-      <Text className="mt-14">Current Destination: { destination?.formatted_address }</Text>
-      <Text>Arrival ETA: {Math.floor(travelTime!)}</Text>
-      <Button
-        onPress={() => setFindDistance(true)}
-        title="Find Distance"
-      />
-      
+      <View>
+        <Text className="mt-14">Current Destination: { destination?.formatted_address }</Text>
+        <Text className="mb-2">Arrival ETA: {Math.floor(travelTime!)}</Text>
+        <TransitMode setMode={setMode}/>
+        <TouchableOpacity
+          className="flex items-center bg-purple-400 my-2 py-2 rounded-[25px]"
+          onPress={() => {
+            if(location) {
+              setFindDistance(true)
+            }
+          }}
+        >
+          <Text>
+            Find Distance
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       {location ? (
         <MapView
           provider={PROVIDER_GOOGLE}
           zoomEnabled={true}
           initialRegion={{
-            latitude: location.coords.latitude,
+            latitude: location.coords.latitude, 
             longitude: location.coords.longitude,
             latitudeDelta: 0.0922,
             longitudeDelta: 0.0421,
@@ -92,17 +67,17 @@ export default function HomeScreen() {
           showsUserLocation={true}
           followsUserLocation={true}
           
-          className=" w-[90%] h-[80%]"
+          className=" w-[90%] h-[70%]"
         > 
-          { findDistance ? (
+          { findDistance && destination ? (
             <MapViewDirections
               origin={{
                 latitude: location.coords.latitude,
-                longitude: location.coords.longitude
+                longitude: location.coords.longitude 
               }}
               destination={{
-                latitude: destination!.geometry.location.lat,
-                longitude: destination!.geometry.location.lng
+                latitude: destination?.geometry.location.lat,
+                longitude: destination?.geometry.location.lng
               }}
               mode={mode}
               onReady={(result) => {
