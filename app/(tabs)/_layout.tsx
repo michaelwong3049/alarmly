@@ -7,13 +7,22 @@ export default function HomeLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Home"
+          title: "Home",
+          tabBarIcon: () => <FontAwesome size={26} name="home"/>
         }}
       />
       <Tabs.Screen
         name="alarms"
         options={{
-          title: "Alarms"
+          title: "Alarms",
+          tabBarIcon: () => <FontAwesome size={22} name="bell"/>
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: "Profile",
+          tabBarIcon: () => <FontAwesome size={24} name="user"/>
         }}
       />
     </Tabs>
